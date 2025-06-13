@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Plant - Analysis</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Arial', sans-serif;
+        }
+
+        body {
+            background-color: #f4f4f4;
+            text-align: center;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 30px auto;
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            color: #2c7e3a;
+            margin-bottom: 10px;
+        }
+
+        .des {
+            color: #555;
+            font-size: 16px;
+            margin-bottom: 20px;
+        }
+
+        .cards {
+            display: flex;
+            justify-content: space-between;
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .card {
+            flex: 1;
+            background: #eaf7ea;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+            box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .card h3 {
+            color: #2c7e3a;
+            margin-bottom: 5px;
+        }
+
+        .card i {
+            font-size: 24px;
+            color: #2c7e3a;
+            margin-bottom: 10px;
+        }
+
+        .upload-area {
+            border: 2px dashed #2c7e3a;
+            padding: 20px;
+            margin-top: 20px;
+            cursor: pointer;
+            border-radius: 8px;
+            text-align: center;
+            position: relative;
+            background: #f9fff9;
+        }
+
+        .upload-area p {
+            font-size: 16px;
+            color: #2c7e3a;
+            font-weight: bold;
+        }
+
+        input[type="file"] {
+            opacity: 0;
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            left: 0;
+            cursor: pointer;
+        }
+
+        img#imagePreview {
+            display: none;
+            margin-top: 15px;
+            max-width: 100%;
+            height: auto;
+            border: 2px solid #2c7e3a;
+            border-radius: 8px;
+            box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        button {
+            background-color: #2c7e3a;
+            color: white;
+            border: none;
+            padding: 12px 18px;
+            font-size: 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 15px;
+            transition: 0.3s;
+        }
+
+        button:hover {
+            background-color: #256d32;
+        }
+
+        #loading {
+            margin-top: 15px;
+            font-size: 16px;
+            color: #ff9800;
+        }
+
+        #result {
+            margin-top: 15px;
+            padding: 15px;
+            background: #eaf7ea;
+            border-radius: 8px;
+            display: none;
+        }
+
+        .features {
+            margin-top: 30px;
+            padding: 15px;
+            background: #eaf7ea;
+            border-radius: 8px;
+        }
+
+        .features i {
+            font-size: 20px;
+            color: #2c7e3a;
+            margin-right: 8px;
+            padding: 5px;
+        }
+
+        .features-head {
+            margin-top: 30px;
+        }
+
+        @media (max-width: 600px) {
+            .cards {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1><i class="fas fa-leaf"></i> Plant Scan : Advanced Plant Analysis Tool</h1>
+        <p class="des">
+            Upload an image to analyze plant species, health condition, and receive care recommendations.
+        </p>
+
+        <h2>How to Use</h2>
+        <div class="cards">
+            <div class="card">
+                <i class="fas fa-upload"></i>
+                <h3>Upload</h3>
+                <p>Select or Drag and drop a plant image</p>
+            </div>
+            <div class="card">
+                <i class="fas fa-magnifying-glass"></i>
+                <h3>Analyze</h3>
+                <p>Click "Analyze Plant" to process the image</p>
+            </div>
+            <div class="card">
+                <i class="fas fa-file-download"></i>
+                <h3>Download</h3>
+                <p>Get your Detailed PDF report about the plant</p>
+            </div>
+        </div>
+
+        <form id="uploadform" enctype="multipart/form-data">
+            <div class="upload-area" id="dropArea">
+                <p>Drag and Drop or <strong>Upload</strong> Plant Image</p>
+                <input type="file" name="image" accept="image/*" required id="imageInput" />
+                <img src="" id="imagePreview" alt="Image Preview">
+            </div>
+            <button type="submit">
+                <i class="fas fa-search"></i> Analyze Plant
+            </button>
+        </form>
+
+        <div id="loading" style="display: none;">
+            <i class="fas fa-spinner fa-spin"></i> Analyzing plant image...
+        </div>
+
+        <div id="result"></div>
+
+        <button id="downloadButton" style="display: none;">
+            <i class="fas fa-download"></i> Download PDF Report
+        </button>
+
+        <h2 class="features-head">Features</h2>
+        <div class="features">
+            <p><i class="fas fa-seedling"></i> AI-Powered Plant Analysis</p>
+            <p><i class="fas fa-check-circle"></i> Accurate Species Identification</p>
+            <p><i class="fas fa-heartbeat"></i> Health & Care Recommendations</p>
+            <p><i class="fas fa-file-alt"></i> Detailed PDF Report</p>
+        </div>
+    </div>
+
+    <script>
+        const imageInput = document.getElementById("imageInput");
+        const imagePreview = document.getElementById("imagePreview");
+        const uploadForm = document.getElementById("uploadform");
+        const resultDiv = document.getElementById("result");
+        const loadingDiv = document.getElementById("loading");
+        const downloadButton = document.getElementById("downloadButton");
+        const dropArea = document.getElementById("dropArea");
+
+        // Function to handle file selection
+        function handleFile(file) {
+            if (!file.type.startsWith("image/")) {
+                alert("Please upload a valid image file.");
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                imagePreview.src = e.target.result;
+                imagePreview.style.display = "block";
+            };
+            reader.readAsDataURL(file);
+
+            // Assign the file to input field to maintain consistency
+            const dataTransfer = new DataTransfer();
+            dataTransfer.items.add(file);
+            imageInput.files = dataTransfer.files;
+        }
+
+        // Click event for the drop area to open file selector
+        dropArea.addEventListener("click", () => imageInput.click());
+
+        // Drag and drop functionality
+        dropArea.addEventListener("dragover", (event) => {
+            event.preventDefault();
+            dropArea.classList.add("dragover");
+        });
+
+        dropArea.addEventListener("dragleave", () => {
+            dropArea.classList.remove("dragover");
+        });
+
+        dropArea.addEventListener("drop", (event) => {
+            event.preventDefault();
+            dropArea.classList.remove("dragover");
+
+            const file = event.dataTransfer.files[0];
+            if (file) {
+                handleFile(file);
+            }
+        });
+
+        // Handle file input change
+        imageInput.addEventListener("change", (event) => {
+            const file = event.target.files[0];
+            if (file) {
+                handleFile(file);
+            }
+        });
+
+        // Upload form submission
+        uploadForm.addEventListener("submit", async (event) => {
+            event.preventDefault();
+
+            if (!imageInput.files.length) {
+                resultDiv.textContent = "Please upload an image first.";
+                resultDiv.style.display = "block";
+                return;
+            }
+
+            const formData = new FormData(uploadForm);
+            loadingDiv.style.display = "block";
+            resultDiv.style.display = "none";
+            downloadButton.style.display = "none";
+
+            try {
+                const response = await fetch("/analyze", {
+                    method: "POST",
+                    body: formData,
+                });
+
+                const data = await response.json();
+
+                if (data.results) {
+                    resultDiv.innerHTML = `<h3>Analysis Result:</h3><p>${data.results.replace(/\n/g, "<br>")}</p>`;
+                    resultDiv.style.display = "block";
+                    downloadButton.style.display = "block";
+                    downloadButton.dataset.analysisResult = data.results;
+                    downloadButton.dataset.analysisImage = imagePreview.src;
+                } else {
+                    resultDiv.textContent = data.error;
+                    resultDiv.style.display = "block";
+                }
+            } catch (err) {
+                resultDiv.textContent = "Error: " + err.message;
+                resultDiv.style.display = "block";
+            } finally {
+                loadingDiv.style.display = "none";
+            }
+        });
+
+        // Download report
+        downloadButton.addEventListener("click", async () => {
+            const analysisResult = downloadButton.dataset.analysisResult || "No result available.";
+            const analysisImage = downloadButton.dataset.analysisImage || "";
+
+            try {
+                const response = await fetch("/download", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({
+                        result: analysisResult,
+                        image: analysisImage,
+                    }),
+                });
+
+                if (!response.ok) throw new Error(response.statusText);
+
+                const blob = await response.blob();
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement("a");
+                a.href = url;
+                a.download = "analysis_report.pdf";
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+            } catch (error) {
+                alert("Error: " + error.message);
+            }
+        });
+
+    </script>
+</body>
+
+</html
